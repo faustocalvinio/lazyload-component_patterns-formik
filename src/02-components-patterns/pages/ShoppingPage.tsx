@@ -1,5 +1,4 @@
 import { ProductButtons, ProductCard, ProductImage, ProductTitle } from "../components";
-import "../styles/custom-styles.css";
 
 import { products } from "../data/products";
 
@@ -14,8 +13,7 @@ export const ShoppingPage = () => {
             <hr />                          
                         <ProductCard 
                             key={ product.id }                         
-                            product={ product }
-                            className="bg-dark text-white"
+                            product={ product }                           
                             initialValues={{
                                 count: 6,
                                 maxCount: 15,
@@ -23,18 +21,12 @@ export const ShoppingPage = () => {
                         >
                             {
 
-                                ( {reset, increaseBy, isMaxCountReached, count, maxCount} ) => (
+                                ( args ) => (
                                     <>
-                                        <ProductImage className="custom-image" style={{ boxShadow: '10px 10px 10px rgba(0,0,0,0.2)' }} />
-                                            <ProductTitle className="text-bold" />
-                                        <ProductButtons className="custom-buttons" />                                        
-                                        <button onClick={reset} >Reset</button>
-                                        <button onClick={()=>increaseBy(-2)} >-2</button>
-                                        {
-                                            ( !isMaxCountReached && (<button onClick={()=>increaseBy(2)} >+2</button>))
-                                        }
+                                        <ProductImage />
+                                        <ProductTitle />
+                                        <ProductButtons />                                       
                                         
-                                        <span>{count} - maxCount {maxCount}</span>
                                     </>
                                 )
                             }
