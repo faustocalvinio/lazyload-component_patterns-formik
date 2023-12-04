@@ -1,29 +1,30 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styles from "../styles/styles.module.css";
 import { useProduct } from "../hooks/useProduct";
 import { createContext, type CSSProperties, type ReactElement } from 'react';
-import { onChangeArgs, Product } from "../interfaces/products.interfaces";
+import { InitialValues, onChangeArgs, Product, ProductCardHandlers, ProductContextProps } from "../interfaces/products.interfaces";
+
 
 export interface Props{
     product: Product;
-    children?: ReactElement | ReactElement[];    
+    // children?: ReactElement | ReactElement[] | (() => JSX.Element) ;
+    children: ( args:ProductCardHandlers ) => JSX.Element    
     className?: string;    
     style?: CSSProperties;
     onChange?: (args:onChangeArgs) => void;
     value?: number;
+    initialValues?: InitialValues;
 }
 
-interface ProductContextProps {
-    counter: number;
-    increaseBy: (value:number) => void;
-    product: Product;
-}
+
 
 export const ProductContext = createContext({} as ProductContextProps);
 
-export const ProductCard = ({children,product,className,style,onChange,value}:Props) => {
+export const ProductCard = ({children,product,className,style,onChange,value,initialValues}:Props) => {
 
-    const { counter, increaseBy } = useProduct({
+    const { counter, increaseBy, maxCount, isMaxCountReached, reset } = useProduct({
         onChange,
+        initialValues,
         product,
         value
     });   
@@ -32,6 +33,7 @@ export const ProductCard = ({children,product,className,style,onChange,value}:Pr
         <ProductContext.Provider value={{
             counter,
             increaseBy,
+            maxCount,
             product
         }}>
             <div 
@@ -39,7 +41,16 @@ export const ProductCard = ({children,product,className,style,onChange,value}:Pr
                 style={ style }
              >
 
-                {children}              
+                { 
+                    children({
+                        count: counter,
+                        isMaxCountReached,
+                        maxCount: initialValues?.maxCount,
+                        product,
+                        increaseBy,
+                        reset                        
+                    }) 
+                }              
             </div>
         </ProductContext.Provider>
     )
