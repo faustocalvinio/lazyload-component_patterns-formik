@@ -1,55 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
 import { ProductButtons, ProductCard, ProductImage, ProductTitle } from "../components";
-import { Product } from "../interfaces/products.interfaces";
 import "../styles/custom-styles.css";
-
-
-const product1 = {
-    id:'1',
-    title:'Coffee Mug - Card',
-    img: './coffee-mug.png'
-}
-const product2 = {
-    id:'2',
-    title:'Coffee Mug 2 - Meme',
-    img: './coffeemug2.png'
-}
-
-const products: Product[] = [product1,product2]
-
-interface ProductInCart extends Product {
-    count: number;
-}
+import { useShoppingCart } from "../hooks/useShoppingCart";
 
 export const ShoppingPage = () => {
 
-
-    const [shoppingCart, setShoppingCart] = useState<{ [key:string]: ProductInCart }>({});
-
-
-    function onProductCountChange( { count,product }: { count: number, product: Product } ) {
-        // console.log('onproductcountchange',count);
-        setShoppingCart( oldShoppingCart => {
-
-            if ( count === 0 ) {
-
-                const { [product.id]: toDelete, ...rest } = oldShoppingCart;
-
-                return {
-                    ...rest,
-                }
-            } 
-
-            return {
-                ...oldShoppingCart,
-                [product.id]: {...product,count}
-            }
-        })
-    
-    }
+    const { onProductCountChange, products , shoppingCart } = useShoppingCart();    
 
     return (
+
         <div>
             <h1>Shopping Page! 🛒🤸</h1>
             <hr />   
@@ -73,11 +31,9 @@ export const ShoppingPage = () => {
                             <ProductButtons className="custom-buttons" />
                         </ProductCard>   
                     ))
-                }
-
-                
-
+                }              
             </div>   
+
             <div className="shopping-cart">
                
                 {
@@ -98,15 +54,7 @@ export const ShoppingPage = () => {
                         </ProductCard>
                     ))
                 }
-            </div>
-
-
-                <div>
-                    <code>
-                        {JSON.stringify(shoppingCart)}
-                    </code>
-                </div>
-
+            </div>              
         </div>
     )
 }
