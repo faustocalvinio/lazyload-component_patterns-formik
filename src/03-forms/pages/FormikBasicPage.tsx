@@ -15,14 +15,25 @@ export const FormikBasicPage = () => {
 
         if( !firstName ) {
             errors.firstName = 'Required!'
-        } else if( firstName.length > 15 ) {
+        } else if( firstName.length >= 15 ) {
             errors.firstName = 'Must be 15 characters or less'        
         }
+        if( !lastName ) {
+            errors.lastName = 'Required!'
+        } else if( lastName.length >= 10 ) {
+            errors.lastName = 'Must be 15 characters or less'        
+        }
+
+        if (!email) {
+            errors.email = 'Required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+            errors.email = 'Invalid email address';
+        }        
 
         return 
     }
 
-    const { handleChange, values, handleSubmit } = useFormik({
+    const { handleChange, values, handleSubmit, errors, touched } = useFormik({
         initialValues: {
             firstName: '',
             lastName: '',
@@ -30,7 +41,8 @@ export const FormikBasicPage = () => {
         },
         onSubmit: (values) => {
             console.log(values);            
-        }
+        },
+        validate,
     });
 
     
@@ -46,7 +58,7 @@ export const FormikBasicPage = () => {
                     onChange={ handleChange }
                     value={ values.firstName }
                 />
-                <span>First Name is required</span>
+                { touched.firstName && errors.firstName && <span>{ errors.firstName }</span>  }
 
                 <label htmlFor="lastName">Last Name</label>
                 <input 
@@ -55,7 +67,7 @@ export const FormikBasicPage = () => {
                     onChange={ handleChange }
                     value={ values.lastName }
                 />
-                <span>Last Name is required</span>
+                { touched.lastName && errors.lastName && <span>{ errors.lastName }</span> }
 
                 <label htmlFor="email">Email Address</label>
                 <input 
@@ -65,8 +77,7 @@ export const FormikBasicPage = () => {
                     value={ values.email }
                 />
 
-                <span>Email is required</span>
-                <span>Check for an valid email format</span>
+                { touched.email && errors.email && <span>{ errors.email }</span> }
 
                 <button type="submit">Submit</button>
             </form>
