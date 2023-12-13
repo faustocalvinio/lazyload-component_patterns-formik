@@ -1,68 +1,48 @@
 import '../styles/styles.css';
-import { useForm } from '../hooks/useForm';
-import { FormEvent } from 'react';
-
+import { Form, Formik } from 'formik';
+import { MyTextInput } from '../components';
+import * as Yup from 'yup';
 export const RegisterFormikPage = () => {
 
-    const { 
-        formData , email , name , isValidEmail ,password1 , password2 , onChange , resetForm
-    } = useForm({
-        name: '',
-        email: '',
-        password1: '',
-        password2: '',
-    });
     
-
-    function onSubmit( event : FormEvent<HTMLFormElement> ) {
-        event.preventDefault();
-        console.log(formData);        
-    };
-
     return (
         <div>
             <h1>Register Formik Page</h1>
-            <form noValidate onSubmit={ onSubmit }>
-                <input
-                    name="name" 
-                    type="text" 
-                    placeholder="Name"
-                    value={name}
-                    onChange={ onChange }
-                    className={`${name.trim().length<= 0 && 'has-error'}`}
-                />
-                { name.trim().length<= 0 && <span>Este campo es necesario</span> }
-                <input
-                    name="email" 
-                    type="email" 
-                    placeholder="Email"
-                    value={email}
-                    onChange={ onChange }
-                    className={` ${!isValidEmail(email) && 'has-error'} `}
-                />
-                { !isValidEmail(email) && <span>Este email no es valido</span> }
-                <input
-                    name="password1" 
-                    type="password" 
-                    placeholder="Password1"
-                    value={password1}
-                    onChange={ onChange }
-                />
-                { password1.trim().length<=0 && <span>Este campo es necesario</span> }
-                { password1.trim().length<6 && password1.trim().length>0 && <span>La contrasenia tiene que tener 6 caracteres</span> }
+            <Formik
+                initialValues={{
+                    username:'',
+                    email:'',
+                    password1:'',
+                    password2:''
+                }}
+                onSubmit={ (values, actions) => {
+                    console.log(values); 
+                    actions.resetForm();                   
+                }}
+                validationSchema={Yup.object({
+                    username: Yup.string().min(2,'Min 2 chars').max(15, 'Must be 15 characters or less').required('First Name Required'),
+                    email: Yup.string().email('Invalid email address').required('Email Required'),
+                    password1: Yup.string().min(6, 'Min 6 chars').required('Password Required'),
+                    password2: Yup.string().oneOf([Yup.ref('password1')], 'Passwords must match')
+                })}
+            >
+                {
+                    formik => (
+                        <Form>
+                            <MyTextInput name='username' label={'UserName'} />
 
-                <input
-                    name="password2" 
-                    type="password" 
-                    placeholder="Repeat PW"
-                    value={password2}
-                    onChange={ onChange }
-                />
-                { password2.trim().length<= 0 && <span>Este campo es necesario</span> }
-                { password2.trim().length > 0 && password1!==password2 && <span>Las contrasenias deben coincidir</span> }
-                <button type="submit" >Create</button>
-                <button type='button' onClick={ resetForm }>Reset Form</button>
-            </form>
+                            <MyTextInput label={"Email Address"} name={"email"} placeholder="fausto@me.com" type="email"                       
+                            /> 
+
+                            <MyTextInput label={"Password"} name={"password1"} placeholder="*********" type="password" />
+
+                            <MyTextInput label={"Password"} name={"password2"} placeholder="*********" type="password" />
+
+                            <button type="submit">Submit</button>
+                        </Form>
+                    )
+                }
+            </Formik>
         </div>
     )
 }
